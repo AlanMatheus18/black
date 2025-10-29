@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { X } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+// A importação do 'supabase' foi removida daqui
 
 interface RegistrationModalProps {
   isOpen: boolean;
@@ -14,33 +14,28 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  /**
+   * Função de envio modificada.
+   * Ela não se conecta mais ao Supabase. Apenas simula
+   * um tempo de carregamento e redireciona o usuário.
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
 
-    try {
-      const { error: insertError } = await supabase
-        .from('leads')
-        .insert([{ name, email, phone }])
-        .select()
-        .maybeSingle();
+    // 1. Apenas mostramos os dados no console para fins de teste
+    console.log('Dados do formulário (simulado):', { name, email, phone });
 
-      if (insertError) {
-        if (insertError.code === '23505') {
-          setError('Este email já está cadastrado!');
-        } else {
-          setError('Erro ao realizar cadastro. Tente novamente.');
-        }
-        setIsSubmitting(false);
-        return;
-      }
+    // 2. Simulamos um atraso de rede (1.5 segundos) 
+    //    para que o botão "Cadastrando..." apareça.
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
-      window.location.href = 'https://chat.whatsapp.com/seu-grupo-aqui';
-    } catch (err) {
-      setError('Erro ao realizar cadastro. Tente novamente.');
-      setIsSubmitting(false);
-    }
+    // 3. Redirecionamos para a página de sucesso
+    window.location.href = 'https://chat.whatsapp.com/seu-grupo-aqui';
+
+    // Não é necessário chamar setIsSubmitting(false), 
+    // pois a página será redirecionada.
   };
 
   if (!isOpen) return null;
